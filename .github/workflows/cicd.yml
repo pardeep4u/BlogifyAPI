@@ -18,112 +18,111 @@ name: CICD
 on: [push, workflow_dispatch]
 
 jobs:
-  setup-code-base:
-    runs-on: ubuntu-latest
-      steps:
-        - name: Say Hello
-          run: echo "Hello Ji"
-        
-        - name: Fetch Code from Github Repo
-          uses: actions/checkout@v3
+    setup-code-base:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Say Hello
+              run: echo "Hello Ji"
 
-        - name: Set up Docker
-          if: ${{ success() }}
-          uses: docker/setup-buildx-action@v1
-        
-        - name: Install Docker Compose
-          if: ${{ success() }}
-          run: |
-            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
+            - name: Fetch Code from Github Repo
+              uses: actions/checkout@v3
 
-        - name: Build and run Docker Compose
-          if: ${{ success() }}
-          env:
-            REDIS_PORT: ${{ secrets.REDIS_PORT }}
-            REDIS_HOST: ${{ secrets.REDIS_HOST }}
-            PORT: ${{ secrets.PORT }}
-            JWT_TOKEN_FOR_TESTING: ${{ secrets.JWT_TOKEN_FOR_TESTING }}
-            JWT_SECRET: ${{ secrets.JWT_SECRET }}
-            AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-            AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-            AWS_REGION: ${{ secrets.AWS_REGION }}
-            MONGODB: ${{ secrets.MONGODB }}
-            TRANSPORTER_EMAIL: ${{ secrets.TRANSPORTER_EMAIL }}
-            TRANSPORTER_EMAIL_PASS: ${{ secrets.TRANSPORTER_EMAIL_PASS }}
-            AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-          run: |
+            - name: Set up Docker
+              if: ${{ success() }}
+              uses: docker/setup-buildx-action@v1
 
-            export REDIS_PORT="${{ secrets.REDIS_PORT }}"
-            export REDIS_HOST="${{ secrets.REDIS_HOST }}"
-            export PORT="${{ secrets.PORT }}"
-            export JWT_TOKEN_FOR_TESTING="${{ secrets.JWT_TOKEN_FOR_TESTING }}"
-            export JWT_SECRET="${{ secrets.JWT_SECRET }}"
-            export AWS_ACCESS_KEY="${{ secrets.AWS_ACCESS_KEY }}"
-            export AWS_SECRET_KEY="${{ secrets.AWS_SECRET_KEY }}"
-            export AWS_REGION="${{ secrets.AWS_REGION }}"
-            export MONGODB="${{ secrets.MONGODB }}"
-            export TRANSPORTER_EMAIL="${{ secrets.TRANSPORTER_EMAIL }}"
-            export TRANSPORTER_EMAIL_PASS="${{ secrets.TRANSPORTER_EMAIL_PASS }}"
-            export AWS_BUCKET_NAME="${{ secrets.AWS_BUCKET_NAME }}"
+            - name: Install Docker Compose
+              if: ${{ success() }}
+              run: |
+                  sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                  sudo chmod +x /usr/local/bin/docker-compose
 
-            docker-compose up -d
-        
-        - name: Install Node.js
-          if: ${{ success() }}
-          uses: actions/setup-node@v3
-        
-        - name: Installing Jest
-          if: ${{ success() }}
-          run: npm install jest supertest
+            - name: Build and run Docker Compose
+              if: ${{ success() }}
+              env:
+                  REDIS_PORT: ${{ secrets.REDIS_PORT }}
+                  REDIS_HOST: ${{ secrets.REDIS_HOST }}
+                  PORT: ${{ secrets.PORT }}
+                  JWT_TOKEN_FOR_TESTING: ${{ secrets.JWT_TOKEN_FOR_TESTING }}
+                  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+                  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+                  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+                  AWS_REGION: ${{ secrets.AWS_REGION }}
+                  MONGODB: ${{ secrets.MONGODB }}
+                  TRANSPORTER_EMAIL: ${{ secrets.TRANSPORTER_EMAIL }}
+                  TRANSPORTER_EMAIL_PASS: ${{ secrets.TRANSPORTER_EMAIL_PASS }}
+                  AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+              run: |
 
-        - name: Run all test cases
-          if: ${{ success() }}
-          run: npm test
+                  export REDIS_PORT="${{ secrets.REDIS_PORT }}"
+                  export REDIS_HOST="${{ secrets.REDIS_HOST }}"
+                  export PORT="${{ secrets.PORT }}"
+                  export JWT_TOKEN_FOR_TESTING="${{ secrets.JWT_TOKEN_FOR_TESTING }}"
+                  export JWT_SECRET="${{ secrets.JWT_SECRET }}"
+                  export AWS_ACCESS_KEY="${{ secrets.AWS_ACCESS_KEY }}"
+                  export AWS_SECRET_KEY="${{ secrets.AWS_SECRET_KEY }}"
+                  export AWS_REGION="${{ secrets.AWS_REGION }}"
+                  export MONGODB="${{ secrets.MONGODB }}"
+                  export TRANSPORTER_EMAIL="${{ secrets.TRANSPORTER_EMAIL }}"
+                  export TRANSPORTER_EMAIL_PASS="${{ secrets.TRANSPORTER_EMAIL_PASS }}"
+                  export AWS_BUCKET_NAME="${{ secrets.AWS_BUCKET_NAME }}"
 
-        - name: executing remote ssh commands using password
-          if: ${{ success() }}
-          uses: appleboy/ssh-action@v0.1.10
-          with:
-            
-            host: ${{ secrets.EC2_NEW_NEW_HOST }}
-            username: ${{ secrets.EC2_USERNAME }}
-            key: ${{ secrets.EC2_NEW_NEW_PRIVATE_KEY }}
-            port: 22
+                  docker-compose up -d
 
-            script: |
-  
-              sudo yum update -y
-              sudo yum install docker -y
-              sudo service docker start
-  
-              sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-              sudo chmod +x /usr/local/bin/docker-compose
-              docker-compose --version
-  
-              mkdir app
-              cd app
-  
-              sudo yum install git -y
-              git version
-  
-  
-              git clone https://github.com/${{github.repository}}.git
-              repo_name=$(echo "${{ github.repository }}" | awk -F/ '{print $2}')
-              cd "$repo_name"
-              pwd
-  
-              echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" > .env
-              echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
-              echo "PORT=${{ secrets.PORT }}" >> .env
-              echo "JWT_TOKEN_FOR_TESTING=${{ secrets.JWT_TOKEN_FOR_TESTING }}" >> .env
-              echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-              echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> .env
-              echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
-              echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
-              echo "MONGODB=${{ secrets.MONGODB }}" >> .env
-              echo "TRANSPORTER_EMAIL=${{ secrets.TRANSPORTER_EMAIL }}" >> .env
-              echo "TRANSPORTER_EMAIL_PASS=${{ secrets.TRANSPORTER_EMAIL_PASS }}" >> .env
-              echo "AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}" >> .env
-  
-              sudo docker-compose up
+            - name: Install Node.js
+              if: ${{ success() }}
+              uses: actions/setup-node@v3
+
+            - name: Installing Jest
+              if: ${{ success() }}
+              run: npm install jest supertest
+
+            - name: Run all test cases
+              if: ${{ success() }}
+              run: npm test
+
+            - name: executing remote ssh commands using password
+              if: ${{ success() }}
+              uses: appleboy/ssh-action@v0.1.10
+              with:
+                  host: ${{ secrets.EC2_NEW_NEW_HOST }}
+                  username: ${{ secrets.EC2_USERNAME }}
+                  key: ${{ secrets.EC2_NEW_NEW_PRIVATE_KEY }}
+                  port: 22
+
+                  script: |
+
+                      sudo yum update -y
+                      sudo yum install docker -y
+                      sudo service docker start
+
+                      sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                      sudo chmod +x /usr/local/bin/docker-compose
+                      docker-compose --version
+
+                      mkdir app
+                      cd app
+
+                      sudo yum install git -y
+                      git version
+
+
+                      git clone https://github.com/${{github.repository}}.git
+                      repo_name=$(echo "${{ github.repository }}" | awk -F/ '{print $2}')
+                      cd "$repo_name"
+                      pwd
+
+                      echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" > .env
+                      echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
+                      echo "PORT=${{ secrets.PORT }}" >> .env
+                      echo "JWT_TOKEN_FOR_TESTING=${{ secrets.JWT_TOKEN_FOR_TESTING }}" >> .env
+                      echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+                      echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> .env
+                      echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
+                      echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
+                      echo "MONGODB=${{ secrets.MONGODB }}" >> .env
+                      echo "TRANSPORTER_EMAIL=${{ secrets.TRANSPORTER_EMAIL }}" >> .env
+                      echo "TRANSPORTER_EMAIL_PASS=${{ secrets.TRANSPORTER_EMAIL_PASS }}" >> .env
+                      echo "AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}" >> .env
+
+                      sudo docker-compose up
