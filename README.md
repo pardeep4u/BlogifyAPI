@@ -77,3 +77,5 @@ AWS_BUCKET_NAME={put here aws bucket name}
 ## CI/CD Workflow
 
 ![workflow drawio (1)](https://github.com/sourav4u/BlogifyAPI/assets/64978605/d6519829-da1a-4704-8c8a-9ca9c32260f8)
+
+Get all information and endpoints related to this API [**HERE**](https://documenter.getpostman.com/view/28607884/2s946h9sM9#9fff2b66-e033-42f9-8545-30585d4ec257)
