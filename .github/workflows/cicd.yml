@@ -54,19 +54,6 @@ jobs:
                   AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
               run: |
 
-                  export REDIS_PORT="${{ secrets.REDIS_PORT }}"
-                  export REDIS_HOST="${{ secrets.REDIS_HOST }}"
-                  export PORT="${{ secrets.PORT }}"
-                  export JWT_TOKEN_FOR_TESTING="${{ secrets.JWT_TOKEN_FOR_TESTING }}"
-                  export JWT_SECRET="${{ secrets.JWT_SECRET }}"
-                  export AWS_ACCESS_KEY="${{ secrets.AWS_ACCESS_KEY }}"
-                  export AWS_SECRET_KEY="${{ secrets.AWS_SECRET_KEY }}"
-                  export AWS_REGION="${{ secrets.AWS_REGION }}"
-                  export MONGODB="${{ secrets.MONGODB }}"
-                  export TRANSPORTER_EMAIL="${{ secrets.TRANSPORTER_EMAIL }}"
-                  export TRANSPORTER_EMAIL_PASS="${{ secrets.TRANSPORTER_EMAIL_PASS }}"
-                  export AWS_BUCKET_NAME="${{ secrets.AWS_BUCKET_NAME }}"
-
                   echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> env/backend.env
                   echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> env/backend.env
                   echo "PORT=${{ secrets.PORT }}" >> env/backend.env
@@ -85,6 +72,22 @@ jobs:
             - name: Install Node.js
               if: ${{ success() }}
               uses: actions/setup-node@v3
+
+            - name: Set Enviroment variable to run all test cases
+              run: |
+
+                  echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> env/backend.env
+                  echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> env/backend.env
+                  echo "PORT=${{ secrets.PORT }}" >> env/backend.env
+                  echo "JWT_TOKEN_FOR_TESTING=${{ secrets.JWT_TOKEN_FOR_TESTING }}" >> env/backend.env
+                  echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> env/backend.env
+                  echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> env/backend.env
+                  echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> env/backend.env
+                  echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> env/backend.env
+                  echo "MONGODB=${{ secrets.MONGODB }}" >> env/backend.env
+                  echo "TRANSPORTER_EMAIL=${{ secrets.TRANSPORTER_EMAIL }}" >> env/backend.env
+                  echo "TRANSPORTER_EMAIL_PASS=${{ secrets.TRANSPORTER_EMAIL_PASS }}" >> env/backend.env
+                  echo "AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}" >> env/backend.env
 
             - name: Installing Jest
               if: ${{ success() }}
