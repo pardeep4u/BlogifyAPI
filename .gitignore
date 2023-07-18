@@ -1,0 +1,7 @@
+node_modules
+plan.txt
+env
+coverage
+mern-stack.png
+tmp
+test-report.html

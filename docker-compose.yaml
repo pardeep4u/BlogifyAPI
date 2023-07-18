@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+    redisservice:
+        # No need add volumes in redisservice because everything in this expire after 30 mins
+        image: redis:latest
+        ports:
+            - 6379:6379
+        container_name: rediscontainer
+
+    nginxservice:
+        image: nginx
+        ports:
+            - '3050:80'
+        volumes:
+            - ./default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - nodeapp1
+            - nodeapp2
+            - redisservice
+
+    nodeapp1:
+        build: ./
+        ports:
+            - '3051:3050'
+        env_file:
+            - ./env/backend.env
+        depends_on:
+            - redisservice
+
+    nodeapp2:
+        build: ./
+        ports:
+            - '3052:3050'
+        env_file:
+            - ./env/backend.env
+        depends_on:
+            - redisservice
