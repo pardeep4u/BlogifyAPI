@@ -27,55 +27,13 @@ jobs:
             - name: Fetch Code from Github Repo
               uses: actions/checkout@v3
 
-            - name: Set up Docker
-              if: ${{ success() }}
-              uses: docker/setup-buildx-action@v1
-
-            - name: Install Docker Compose
-              if: ${{ success() }}
-              run: |
-                  sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-                  sudo chmod +x /usr/local/bin/docker-compose
-
-            - name: Build and run Docker Compose
-              if: ${{ success() }}
-              env:
-                  REDIS_PORT: ${{ secrets.REDIS_PORT }}
-                  REDIS_HOST: ${{ secrets.REDIS_HOST }}
-                  PORT: ${{ secrets.PORT }}
-                  JWT_TOKEN_FOR_TESTING: ${{ secrets.JWT_TOKEN_FOR_TESTING }}
-                  JWT_SECRET: ${{ secrets.JWT_SECRET }}
-                  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-                  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-                  AWS_REGION: ${{ secrets.AWS_REGION }}
-                  MONGODB: ${{ secrets.MONGODB }}
-                  TRANSPORTER_EMAIL: ${{ secrets.TRANSPORTER_EMAIL }}
-                  TRANSPORTER_EMAIL_PASS: ${{ secrets.TRANSPORTER_EMAIL_PASS }}
-                  AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-              run: |
-
-                  echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> env/backend.env
-                  echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> env/backend.env
-                  echo "PORT=${{ secrets.PORT }}" >> env/backend.env
-                  echo "JWT_TOKEN_FOR_TESTING=${{ secrets.JWT_TOKEN_FOR_TESTING }}" >> env/backend.env
-                  echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> env/backend.env
-                  echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> env/backend.env
-                  echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> env/backend.env
-                  echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> env/backend.env
-                  echo "MONGODB=${{ secrets.MONGODB }}" >> env/backend.env
-                  echo "TRANSPORTER_EMAIL=${{ secrets.TRANSPORTER_EMAIL }}" >> env/backend.env
-                  echo "TRANSPORTER_EMAIL_PASS=${{ secrets.TRANSPORTER_EMAIL_PASS }}" >> env/backend.env
-                  echo "AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}" >> env/backend.env
-
-                  docker-compose up -d
-
             - name: Install Node.js
               if: ${{ success() }}
               uses: actions/setup-node@v3
 
             - name: Set Enviroment variable to run all test cases
               run: |
-
+                  pwd
                   echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> env/backend.env
                   echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> env/backend.env
                   echo "PORT=${{ secrets.PORT }}" >> env/backend.env
