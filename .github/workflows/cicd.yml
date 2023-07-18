@@ -35,6 +35,18 @@ jobs:
               run: |
                   pwd
                   ls
+                  export REDIS_PORT=${{ secrets.REDIS_PORT }}
+                  export REDIS_HOST=${{ secrets.REDIS_HOST }}
+                  export PORT=${{ secrets.PORT }}
+                  export JWT_TOKEN_FOR_TESTING=${{ secrets.JWT_TOKEN_FOR_TESTING }}
+                  export JWT_SECRET=${{ secrets.JWT_SECRET }}
+                  export AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
+                  export AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}
+                  export AWS_REGION=${{ secrets.AWS_REGION }}
+                  export MONGODB=${{ secrets.MONGODB }}
+                  export TRANSPORTER_EMAIL=${{ secrets.TRANSPORTER_EMAIL }}
+                  export TRANSPORTER_EMAIL_PASS=${{ secrets.TRANSPORTER_EMAIL_PASS }}
+                  export AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}
                   echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> env/backend.env
                   echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> env/backend.env
                   echo "PORT=${{ secrets.PORT }}" >> env/backend.env
