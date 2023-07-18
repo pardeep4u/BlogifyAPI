@@ -34,6 +34,7 @@ jobs:
             - name: Set Enviroment variable to run all test cases
               run: |
                   pwd
+                  ls
                   echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> env/backend.env
                   echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> env/backend.env
                   echo "PORT=${{ secrets.PORT }}" >> env/backend.env
