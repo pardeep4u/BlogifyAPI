@@ -73,3 +73,7 @@ AWS_BUCKET_NAME={put here aws bucket name}
    `docker-compose up -d`
 6. Now visit `http://localhost:3050/`. </br>
    for more information about API endpoints visit documentation.
+
+## CI/CD Workflow
+
+![workflow drawio (1)](https://github.com/sourav4u/BlogifyAPI/assets/64978605/d6519829-da1a-4704-8c8a-9ca9c32260f8)
