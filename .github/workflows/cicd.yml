@@ -48,6 +48,19 @@ jobs:
                   export TRANSPORTER_EMAIL_PASS=${{ secrets.TRANSPORTER_EMAIL_PASS }}
                   export AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}
 
+                  echo $REDIS_PORT
+                  echo $REDIS_HOST
+                  echo $PORT
+                  echo $JWT_TOKEN_FOR_TESTING
+                  echo $JWT_SECRET
+                  echo $AWS_ACCESS_KEY
+                  echo $AWS_SECRET_KEY
+                  echo $AWS_REGION
+                  echo $MONGODB
+                  echo $TRANSPORTER_EMAIL
+                  echo $TRANSPORTER_EMAIL_PASS
+                  echo $AWS_BUCKET_NAME
+
             - name: Installing Jest
               if: ${{ success() }}
               run: npm install jest supertest
